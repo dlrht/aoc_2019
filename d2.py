@@ -1,5 +1,3 @@
-import math
-
 with open("d2_input.txt") as f:
     line = f.readline()
     line = line.strip()
@@ -34,8 +32,8 @@ def find_input_for_output(output):
     for i in range(100):
         for j in range(100):
             if run_intcode(i,j) == output:
-                print(i, j)
-                print(100 * i + j)
-                return
+                return i,j
 
-find_input_for_output(19690720)
+noun, verb = find_input_for_output(19690720)
+print("Part A: ", run_intcode(12, 2))
+print("Part B: ", 100*noun+verb)
