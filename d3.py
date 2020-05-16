@@ -56,6 +56,8 @@ dist_wire1 = 0
 dist_wire2 = 0
 
 intersections = []
+# Build intersection list
+# Find least steps to each intersection for wire 1
 for i in range(len(wire1_coords)-1):
     x = wire1_coords[i][0] - wire1_coords[i+1][0]
     y = wire1_coords[i][1] - wire1_coords[i+1][1]
@@ -76,6 +78,7 @@ for i in range(len(wire1_coords)-1):
 
     dist_wire1 += dist
 
+# Find least steps to each intersection for wire 2
 for j in range(len(wire2_coords)-1):
     x = wire2_coords[j][0] - wire2_coords[j+1][0]
     y = wire2_coords[j][1] - wire2_coords[j+1][1]
