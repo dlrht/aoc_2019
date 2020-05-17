@@ -2,7 +2,6 @@ with open("d3_input.txt") as f:
     line1 = f.readline().strip().split(",")
     line2 = f.readline().strip().split(",")
 
-# Find coordinates of wire 1... store all of wire 1 as a list of line segments
 center = (0,0)
 
 def build_path(directions):
@@ -30,6 +29,8 @@ def build_path(directions):
 
 
 # https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line
+# Returns point of intersections for 2 line segments l1, l2, defined by two points A, B
+# Returns None if no point of intersection/coincident lines
 def get_intersection(l1_a, l1_b, l2_a, l2_b):
     x1 = l1_a[0]
     y1 = l1_a[1]
@@ -47,55 +48,46 @@ def get_intersection(l1_a, l1_b, l2_a, l2_b):
         if 0.0 <= t and t <= 1.0 and 0.0 <= u and u <= 1.0: # intersection is within both line segments (and not on the lines)
             return (round(x1 + t*(x2 - x1)), round(y1 + t*(y2 - y1)))
             # return (round(x3 + u*(x4 - x3)), round(y3 + u*(y4 - y3)))
+    
+    return None
 
-wire1_coords = build_path(line1)
-wire2_coords = build_path(line2)
-wire1_steps_to_intersection = {}
-wire2_steps_to_intersection = {}
-dist_wire1 = 0
-dist_wire2 = 0
+
+# Build intersection list
+# Find minimal steps to reach any intersection for wire1 by tracing tracing along it and calculating distance for each intersection
+# Also builds list of intersections
+def find_intersections(coords_wire1, coords_wire2, intersections_list):
+    intersection_steps_dict = {}
+    dist_total = 0
+
+    for i in range(len(coords_wire1)-1):
+        x = coords_wire1[i][0] - coords_wire1[i+1][0]
+        y = coords_wire1[i][1] - coords_wire1[i+1][1]
+
+        dist = abs(x) if x != 0 else abs(y)
+
+        for j in range(len(coords_wire2)-1):
+                intersection = get_intersection(coords_wire1[i], coords_wire1[i+1], coords_wire2[j], coords_wire2[j+1])
+                if intersection is not None:
+                    if intersection not in intersections_list:
+                        intersections_list.append(intersection)
+
+                    x1 = abs(coords_wire1[i][0] - intersection[0])
+                    y1 = abs(coords_wire1[i][1] - intersection[1])
+
+                    dist_to_intersection = dist_total + (x1 if x1 != 0 else y1) 
+                    if intersection not in intersection_steps_dict:
+                        intersection_steps_dict[intersection] = dist_to_intersection
+
+        dist_total += dist
+    
+    return intersection_steps_dict
+
 
 intersections = []
-# Build intersection list
-# Find least steps to each intersection for wire 1
-for i in range(len(wire1_coords)-1):
-    x = wire1_coords[i][0] - wire1_coords[i+1][0]
-    y = wire1_coords[i][1] - wire1_coords[i+1][1]
-
-    dist = abs(x) if x != 0 else abs(y)
-
-    for j in range(len(wire2_coords)-1):
-            intersection = get_intersection(wire1_coords[i], wire1_coords[i+1], wire2_coords[j], wire2_coords[j+1])
-            if intersection is not None:
-                intersections.append(intersection)
-
-                x1 = abs(wire1_coords[i][0] - intersection[0])
-                y1 = abs(wire1_coords[i][1] - intersection[1])
-
-                dist_intersection1 = dist_wire1 + (x1 if x1 != 0 else y1) 
-                if intersection not in wire1_steps_to_intersection:
-                    wire1_steps_to_intersection[intersection] = dist_intersection1
-
-    dist_wire1 += dist
-
-# Find least steps to each intersection for wire 2
-for j in range(len(wire2_coords)-1):
-    x = wire2_coords[j][0] - wire2_coords[j+1][0]
-    y = wire2_coords[j][1] - wire2_coords[j+1][1]
-
-    dist = abs(x) if x != 0 else abs(y)
-
-    for i in range(len(wire1_coords)-1):
-            intersection = get_intersection(wire2_coords[j], wire2_coords[j+1], wire1_coords[i], wire1_coords[i+1])
-            if intersection is not None:
-                x2 = abs(wire2_coords[j][0] - intersection[0])
-                y2 = abs(wire2_coords[j][1] - intersection[1])
-
-                dist_intersection2 = dist_wire2 + (x2 if x2 != 0 else y2) 
-                if intersection not in wire2_steps_to_intersection:
-                    wire2_steps_to_intersection[intersection] = dist_intersection2
-
-    dist_wire2 += dist
+wire1_coords = build_path(line1)
+wire2_coords = build_path(line2)
+wire1_steps_to_intersection = find_intersections(wire1_coords, wire2_coords, intersections)
+wire2_steps_to_intersection = find_intersections(wire2_coords, wire1_coords, intersections)
 
 min_dist = wire1_steps_to_intersection[intersections[0]] + wire2_steps_to_intersection[intersections[0]]
 for i in intersections:
@@ -103,6 +95,7 @@ for i in intersections:
     
     if steps < min_dist:
         min_dist = steps
+        print(min_dist)
 
 # Calculate manhattan distances for each intersection and find min
 distances = [abs(i[0]) + abs(i[1]) for i in intersections]
