@@ -2,11 +2,10 @@ with open("d3_input.txt") as f:
     line1 = f.readline().strip().split(",")
     line2 = f.readline().strip().split(",")
 
-center = (0,0)
 
 def build_path(directions):
-    cur_pos = center
-    coords = [center]
+    cur_pos = (0,0)
+    coords = [(0,0)]
     for path_part in directions:
         dir = path_part[0]
         dist = int(path_part[1:])
