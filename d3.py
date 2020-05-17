@@ -1,8 +1,4 @@
-with open("d3_input.txt") as f:
-    line1 = f.readline().strip().split(",")
-    line2 = f.readline().strip().split(",")
-
-
+# Builds a list of coordinates, every adjacent index defines a line segment. First index is starting coord of entire path, last index is ending coord
 def build_path(directions):
     cur_pos = (0,0)
     coords = [(0,0)]
@@ -78,6 +74,10 @@ def find_intersections_steps(coords_wire1, coords_wire2):
     return intersection_steps_dict
 
 
+with open("d3_input.txt") as f:
+    line1 = f.readline().strip().split(",")
+    line2 = f.readline().strip().split(",")
+    
 intersections = []
 wire1_coords = build_path(line1)
 wire2_coords = build_path(line2)
