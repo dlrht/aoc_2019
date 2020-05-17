@@ -51,9 +51,8 @@ def get_intersection(l1_a, l1_b, l2_a, l2_b):
     return None
 
 
-# Build intersection list
-# Find minimal steps to reach any intersection for wire1 by tracing tracing along it and calculating distance for each intersection
-# Also builds list of intersections
+# Returns minimal steps to reach any intersection (between wire1 and wire2) for wire1.
+# Traces along wire1's path and calculates distance travelled for each intersection.
 def find_intersections_steps(coords_wire1, coords_wire2):
     intersection_steps_dict = {}
     dist_total = 0
