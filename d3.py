@@ -78,7 +78,6 @@ with open("d3_input.txt") as f:
     line1 = f.readline().strip().split(",")
     line2 = f.readline().strip().split(",")
     
-intersections = []
 wire1_coords = build_path(line1)
 wire2_coords = build_path(line2)
 wire1_steps_to_intersection = find_intersections_steps(wire1_coords, wire2_coords)
