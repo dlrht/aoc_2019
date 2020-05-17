@@ -55,7 +55,7 @@ def get_intersection(l1_a, l1_b, l2_a, l2_b):
 # Build intersection list
 # Find minimal steps to reach any intersection for wire1 by tracing tracing along it and calculating distance for each intersection
 # Also builds list of intersections
-def find_intersections(coords_wire1, coords_wire2, intersections_list):
+def find_intersections_steps(coords_wire1, coords_wire2):
     intersection_steps_dict = {}
     dist_total = 0
 
@@ -68,9 +68,6 @@ def find_intersections(coords_wire1, coords_wire2, intersections_list):
         for j in range(len(coords_wire2)-1):
                 intersection = get_intersection(coords_wire1[i], coords_wire1[i+1], coords_wire2[j], coords_wire2[j+1])
                 if intersection is not None:
-                    if intersection not in intersections_list:
-                        intersections_list.append(intersection)
-
                     x1 = abs(coords_wire1[i][0] - intersection[0])
                     y1 = abs(coords_wire1[i][1] - intersection[1])
 
@@ -86,16 +83,16 @@ def find_intersections(coords_wire1, coords_wire2, intersections_list):
 intersections = []
 wire1_coords = build_path(line1)
 wire2_coords = build_path(line2)
-wire1_steps_to_intersection = find_intersections(wire1_coords, wire2_coords, intersections)
-wire2_steps_to_intersection = find_intersections(wire2_coords, wire1_coords, intersections)
+wire1_steps_to_intersection = find_intersections_steps(wire1_coords, wire2_coords)
+wire2_steps_to_intersection = find_intersections_steps(wire2_coords, wire1_coords)
 
+intersections = list(wire1_steps_to_intersection.keys())
 min_dist = wire1_steps_to_intersection[intersections[0]] + wire2_steps_to_intersection[intersections[0]]
 for i in intersections:
     steps = wire1_steps_to_intersection[i] + wire2_steps_to_intersection[i]
     
     if steps < min_dist:
         min_dist = steps
-        print(min_dist)
 
 # Calculate manhattan distances for each intersection and find min
 distances = [abs(i[0]) + abs(i[1]) for i in intersections]
