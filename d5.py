@@ -75,8 +75,7 @@ def find_input_for_output(intcode, output):
 
 
 with open(os.path.join(sys.path[0], "d5_input.txt")) as f:
-    line = f.readline()
-    line = line.strip()
+    line = f.readline().strip()
 
 intcode_original = line.split(",")
 intcode_original = [int(i) for i in intcode_original]
