@@ -31,8 +31,8 @@ def DFS_search(parents, v, goal, path):
 # Returns number of vertices in between child1 and child2. Assumes child1 and child2 exist
 def find_num_vertices_between(parents, v, child1, child2):
     # Find a path to each child
-    path_to_child1 = DFS_search(parents, 'COM', 'YOU', [])
-    path_to_child2 = DFS_search(parents, 'COM', 'SAN', [])
+    path_to_child1 = DFS_search(parents, v, child1, [])
+    path_to_child2 = DFS_search(parents, v, child2, [])
 
     # Find index at which the paths start to differ
     split_idx = 0
