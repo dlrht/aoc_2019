@@ -28,7 +28,8 @@ def DFS_search(parents, v, goal, path):
     return None
 
 
-# Returns number of vertices in between child1 and child2. Assumes child1 and child2 exist
+# Returns number of vertices in between child1 and child2 given a grpah defined by parents with root v
+# Assumes child1 and child2 exist
 def find_num_vertices_between(parents, v, child1, child2):
     # Find a path to each child
     path_to_child1 = DFS_search(parents, v, child1, [])
