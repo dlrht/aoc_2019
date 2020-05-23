@@ -14,6 +14,7 @@ def get_values(intcode, ip, modes, num_values):
 
 
 # Executes an intcode program intcode_original starting at ip
+# verbose = 0 (no prints), 1 (prints outputs & program halt), 2 (prints intcode every operation with input_set, ip, opcode, and param_modes. For debugging)
 # Returns a tuple of (program outputs from opcode 4, ip location after execution, modified intcode after execution)
 def run_intcode(intcode_original, ip=0, noun=None, verb=None, input_set=[], halt_if_input_set_empty=False, verbose=0):
     intcode = intcode_original.copy()   # Never affect input incode, return modified intcode
@@ -97,23 +98,18 @@ def find_signal(intcode, settings, feedback_loop=False):
     first_run = True
 
     # Set up an intcode program for each amp : (ip, intcode)
-    for i in range(len(settings)): 
-        amps.append((0, intcode.copy()))
+    amps = [(0, intcode.copy())] * 5
 
     # Infinite feedback loop until Amp E halts.
     while (True):
-        amp_E_ip = amps[-1][0]
-        amp_E_intcode = amps[-1][1]
-
-        # Amp E has halted, signal is last output (from amp E). Exit loop.
+        amp_E_ip, amp_E_intcode = amps[-1]
         if amp_E_ip >= len(amp_E_intcode) or amp_E_intcode[amp_E_ip] == 99:
             break
 
-        # Amp A ---> Amp E
+        # Amp A --B-C-D--> Amp E
         for i,amp in enumerate(amps):
-            amp_i_ip = amp[0]
-            amp_i_intcode = amp[1]
             amp_i_input_set = []
+            amp_i_ip, amp_i_intcode = amp
 
             # Only use phase settings on first run through all amplifiers
             if first_run:
@@ -143,7 +139,7 @@ def find_signal(intcode, settings, feedback_loop=False):
     return last_output
 
 
-# Returns a tuple of (highest_signal, respective_phase_settings) given a set of phase_nums. Length of settings is # of amps.
+# Returns a tuple of (highest_signal, respective_phase_settings) given a set of phase_nums. Length of phase_nums is # of amps.
 def find_highest_signal(intcode, phase_nums, feedback_loop=False):
     highest_signal = (0, [])
 
