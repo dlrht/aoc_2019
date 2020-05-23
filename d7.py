@@ -143,7 +143,7 @@ def find_signal(intcode, settings, feedback_loop=False):
 def find_highest_signal(intcode, phase_nums, feedback_loop=False):
     highest_signal = (0, [])
 
-    for settings in itertools.permutations(phase_nums):
+    for settings in itertools.permutations(phase_nums): # Shafin this is SO smooth, dang
         output = find_signal(intcode, settings, feedback_loop=feedback_loop)
 
         if output > highest_signal[0]:
