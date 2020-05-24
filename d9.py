@@ -87,8 +87,6 @@ class Intcode():
                 src = self.get_values(parameter_modes, [READ])
                 outputs.append(src)
                 self.ip += 2           
-                if verbose >= 1:
-                    print("Output: ", src)
             elif opcode == 5:   # jump-if-true
                 x,y = self.get_values(parameter_modes, [READ, READ])
                 self.ip = y if x != 0 else self.ip + 3
