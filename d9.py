@@ -1,5 +1,4 @@
 from pathlib import Path
-import itertools
 
 POSITION_MODE = 0
 IMMEDIATE_MODE = 1
@@ -38,7 +37,7 @@ class Intcode():
 
             if val is None:
                 print("Error getting value")
-                
+
             values.append(val)
 
         return tuple(values) if len(type_of_param) > 1 else values[0]
