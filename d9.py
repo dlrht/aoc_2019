@@ -86,16 +86,12 @@ class Intcode():
                 self.intcode[z] = x * y
                 self.ip += 4
             elif opcode == 3:   # Single int input
-                if len(input_set) > 0:  # Inputs the values in input_set
-                    self.intcode[x] = input_set.pop(0)
-                    self.ip += 2
-                elif halt_on_empty_input_set:   # Halt the program if no more items in input_set
+                if len(input_set) == 0 and halt_on_empty_input_set:
                     if verbose >= 2:
                         print("Input set empty, halting")
                     break
-                else:   # If no more values in input_set, prompts for user remaining inputs
-                    user_input = input("Enter input: ")
-                    self.intcode[x] = int(user_input)
+                else:
+                    self.intcode[x] = input_set.pop(0) if len(input_set) > 0 else int(input("Enter input: "))
                     self.ip += 2
             elif opcode == 4:   # Outputs value of only parameter and stores to output list
                 outputs.append(x)
