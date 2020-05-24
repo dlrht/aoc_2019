@@ -85,10 +85,10 @@ class Intcode():
             z = params[2] if len(params) >= 3 else None
 
             if opcode == 1:     # Addition
-                self.intcode[z] = x+y
+                self.intcode[z] = x + y
                 self.ip += 4
             elif opcode == 2:   # Multiplication
-                self.intcode[z] = x*y
+                self.intcode[z] = x * y
                 self.ip += 4
             elif opcode == 3:   # Single int input
                 if len(input_set) > 0:  # Inputs the values in input_set
