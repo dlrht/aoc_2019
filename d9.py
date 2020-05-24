@@ -5,29 +5,40 @@ POSITION_MODE = 0
 IMMEDIATE_MODE = 1
 RELATIVE_MODE = 2
 
+READ = 0
+WRITE = 1
+
 class Intcode():
-    def __init__(self, intcode, ip=0, rel_base=0):
+    def __init__(self, intcode, ip=0, rel_base=0, memory_expand_factor=10):
         self.intcode = intcode.copy()
+        self.intcode.extend([0] * len(self.intcode) * memory_expand_factor)
         self.ip = ip
         self.rel_base = rel_base
     
 
-    # Returns num_values-tuple of values following intcode[ip] depending on modes
-    def get_values(self, modes, num_values):
+    # Returns a len(type_of_param)-tuple with appropriate values based on parameter modes
+    # Returns appropriate value if a read command or destination to write to if a write command
+    def get_values(self, modes, type_of_param):
         values = []
-        for i in range(num_values):
-            if modes[i] == POSITION_MODE:
-                val = self.intcode[self.intcode[self.ip+i+1]]
-            elif modes[i] == IMMEDIATE_MODE:
-                val = self.intcode[self.ip+i+1]
-            elif modes[i] == RELATIVE_MODE:
-                val = self.intcode[self.rel_base+i]
-            else:
-                val = -1
-            
+        for i in range(len(type_of_param)):
+            val = -1
+            if type_of_param[i] == READ:
+                if modes[i] == POSITION_MODE:
+                    val = self.intcode[self.intcode[self.ip+i+1]]
+                elif modes[i] == IMMEDIATE_MODE:
+                    val = self.intcode[self.ip+i+1]
+                elif modes[i] == RELATIVE_MODE:
+                    val = self.intcode[self.rel_base + self.intcode[self.ip+i+1]]
+
+            elif type_of_param[i] == WRITE:
+                if modes[i] == POSITION_MODE:
+                    val = self.intcode[self.ip+i+1]
+                elif modes[i] == RELATIVE_MODE:
+                    val = self.rel_base + self.intcode[self.ip+i+1]
+
             values.append(val)
 
-        return tuple(values) if num_values > 1 else values[0]
+        return tuple(values) if len(type_of_param) > 1 else values[0]
 
 
     def Execute(self, input_set=[], new_ip=None, new_rel_base=None, halt_if_input_set_empty=False, verbose=0):
@@ -49,17 +60,18 @@ class Intcode():
                 print_intcode[self.ip] = '***' + str(print_intcode[self.ip]) + '***'
                 print(print_intcode, "-", "ip:"+str(self.ip), "opcode:"+str(opcode), "modes:"+str(parameter_modes))
 
-            if opcode == 1: # Addition
-                x,y = self.get_values(parameter_modes, 2)
-                self.intcode[self.intcode[self.ip+3]] = x+y
+            if opcode == 1:     # Addition
+                x,y,z = self.get_values(parameter_modes, [READ, READ, WRITE])
+                self.intcode[z] = x+y
                 self.ip += 4
-            elif opcode == 2: # Multiplication
-                x,y = self.get_values(parameter_modes, 2)
-                self.intcode[self.intcode[self.ip+3]] = x*y
+            elif opcode == 2:   # Multiplication
+                x,y,z = self.get_values(parameter_modes, [READ, READ, WRITE])
+                self.intcode[z] = x*y
                 self.ip += 4
-            elif opcode == 3: # Single int input
+            elif opcode == 3:   # Single int input
+                x = self.get_values(parameter_modes, [WRITE])                
                 if len(input_set) > 0:  # Inputs the values in input_set
-                    self.intcode[self.intcode[self.ip+1]] = input_set.pop(0)
+                    self.intcode[x] = input_set.pop(0)
                     self.ip += 2
                 elif halt_if_input_set_empty:   # Halt the program if no more items in input_set
                     if verbose >= 2:
@@ -67,28 +79,32 @@ class Intcode():
                     break
                 else:   # If no more values in input_set, prompts for user remaining inputs
                     user_input = input("Enter input: ")
-                    self.intcode[self.intcode[self.ip+1]] = int(user_input)
+                    self.intcode[x] = int(user_input)
                     self.ip += 2
-            elif opcode == 4: # Outputs value of only parameter and stores to output list
-                src = self.get_values(parameter_modes, 1)
+            elif opcode == 4:   # Outputs value of only parameter and stores to output list
+                src = self.get_values(parameter_modes, [READ])
                 outputs.append(src)
                 self.ip += 2           
                 if verbose >= 1:
                     print("Output: ", src)
-            elif opcode == 5: # jump-if-true
-                x,y = self.get_values(parameter_modes, 2)
+            elif opcode == 5:   # jump-if-true
+                x,y = self.get_values(parameter_modes, [READ, READ])
                 self.ip = y if x != 0 else self.ip + 3
-            elif opcode == 6: # jump-if-false
-                x,y = self.get_values(parameter_modes, 2)
+            elif opcode == 6:   # jump-if-false
+                x,y = self.get_values(parameter_modes, [READ, READ])
                 self.ip = y if x == 0 else self.ip + 3
-            elif opcode == 7: # less than
-                x,y = self.get_values(parameter_modes, 2)
-                self.intcode[self.intcode[self.ip+3]] = 1 if x < y else 0
+            elif opcode == 7:   # less than
+                x,y,z = self.get_values(parameter_modes, [READ, READ, WRITE])
+                self.intcode[z] = 1 if x < y else 0
                 self.ip += 4
-            elif opcode == 8: # equals
-                x,y = self.get_values(parameter_modes, 2)
-                self.intcode[self.intcode[self.ip+3]] = 1 if x == y else 0
+            elif opcode == 8:   # equals
+                x,y,z = self.get_values(parameter_modes, [READ, READ, WRITE])
+                self.intcode[z] = 1 if x == y else 0
                 self.ip += 4
+            elif opcode == 9:   # set relative base
+                x = self.get_values(parameter_modes, [READ])
+                self.rel_base += x
+                self.ip += 2
             elif opcode == 99: # Halt opcode
                 if verbose >= 1:
                     print("Opcode 99 : Halting program.")
@@ -100,65 +116,10 @@ class Intcode():
         return outputs
 
 
-# Returns the signal given an intcode and phase settings
-def find_signal(intcode, settings, feedback_loop=False):
-    last_output = 0
-    amps = []
-    first_run = True
+intcode_original = list(map(int, (Path(__file__).parent / 'd9_input.txt').read_text().split(',')))  # Rose this is SO smooth, dang
 
-    # Set up an intcode program for each amp
-    for i in range(len(settings)):
-        amps.append(Intcode(intcode))
+program = Intcode(intcode_original, memory_expand_factor=10)
+print("BOOST keycode from test mode: ", program.Execute([1], verbose=0))
 
-    # Infinite feedback loop until Amp E halts.
-    while (True):
-        amp_E_ip = amps[-1].ip
-        amp_E_intcode = amps[-1].intcode
-        if amp_E_ip >= len(amp_E_intcode) or amp_E_intcode[amp_E_ip] == 99:
-            break
-
-        # Amp A --B-C-D--> Amp E
-        for i,amp in enumerate(amps):
-            amp_i_input_set = []
-
-            # Only use phase settings on first run through all amplifiers
-            if first_run:
-                amp_i_input_set.append(int(settings[i]))
-                first_run = False if amp == amps[-1] else True
-            
-            # Output of last amp is input to current amp
-            amp_i_input_set.append(last_output)
-
-            # Store program state and ip
-            outputs = amp.Execute(input_set=amp_i_input_set, halt_if_input_set_empty=True)
-            
-            # Output of current amp is input to next amp
-            if len(outputs) > 0:
-                last_output = outputs[-1]
-
-        if not feedback_loop:
-            break
-
-    return last_output
-
-
-# Returns a tuple of (highest_signal, respective_phase_settings) given a set of phase_nums. Length of phase_nums is # of amps.
-def find_highest_signal(intcode, phase_nums, feedback_loop=False):
-    highest_signal = (0, [])
-
-    for settings in itertools.permutations(phase_nums): # Shafin this is SO smooth, dang
-        output = find_signal(intcode, settings, feedback_loop=feedback_loop)
-
-        if output > highest_signal[0]:
-            highest_signal = (output, settings)
-
-    return highest_signal
-
-
-intcode_original = list(map(int, (Path(__file__).parent / 'd7_input.txt').read_text().split(',')))  # Rose this is SO smooth, dang
-#intcode_original = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5] # 139629729 : 9,8,7,6,5 (Feedback_loop = true)
-#intcode_original = [3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0] # 43210 : 4,3,2,1,0 (feedback_loop = false)
-
-#print(find_signal(intcode_original, [4,3,2,1,0], feedback_loop=False))
-print("Highest Signal: ", find_highest_signal(intcode_original, [0,1,2,3,4], feedback_loop=False))
-print("Highest Signal with Feedback Loop: ", find_highest_signal(intcode_original, [5,6,7,8,9], feedback_loop=True))
+program = Intcode(intcode_original, memory_expand_factor=10)
+print("Coordinates of distress signal: ", program.Execute([2], verbose=0))
