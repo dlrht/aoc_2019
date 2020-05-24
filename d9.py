@@ -9,20 +9,20 @@ WRITE = 1
 NONE = EXIT = 99
 
 # Dictionary defining parameter behaviours for each opcode
-op_params = {
-    1 : [READ, READ, WRITE],
-    2 : [READ, READ, WRITE],
-    3 : [WRITE],
-    4 : [READ],
-    5 : [READ, READ],
-    6 : [READ, READ], 
-    7 : [READ, READ, WRITE],
-    8 : [READ, READ, WRITE],
-    9 : [READ],
-    EXIT : []
-}
-
 class Intcode():
+    op_params = {
+        1 : [READ, READ, WRITE],
+        2 : [READ, READ, WRITE],
+        3 : [WRITE],
+        4 : [READ],
+        5 : [READ, READ],
+        6 : [READ, READ], 
+        7 : [READ, READ, WRITE],
+        8 : [READ, READ, WRITE],
+        9 : [READ],
+        EXIT : []
+    }
+
     def __init__(self, intcode, ip=0, rel_base=0, memory_expand_factor=10):
         self.intcode = intcode.copy()
         self.intcode.extend([0] * len(self.intcode) * memory_expand_factor)
@@ -33,13 +33,13 @@ class Intcode():
     # Returns a len(type_of_param)-tuple with appropriate values based on parameter modes
     # Returns appropriate value if a read command or destination to write to if a write command
     def get_values(self, opcode, modes):
-        num_params = len(op_params[opcode])
+        num_params = len(self.op_params[opcode])
         modes.extend([0] * (num_params - len(modes)))
         values = []
 
         for i in range(num_params):
             val = None
-            if op_params[opcode][i] == READ:
+            if self.op_params[opcode][i] == READ:
                 if modes[i] == POSITION_MODE:
                     val = self.intcode[self.intcode[self.ip+i+1]]
                 elif modes[i] == IMMEDIATE_MODE:
@@ -47,7 +47,7 @@ class Intcode():
                 elif modes[i] == RELATIVE_MODE:
                     val = self.intcode[self.rel_base + self.intcode[self.ip+i+1]]
 
-            elif op_params[opcode][i] == WRITE:
+            elif self.op_params[opcode][i] == WRITE:
                 if modes[i] == POSITION_MODE:
                     val = self.intcode[self.ip+i+1]
                 elif modes[i] == RELATIVE_MODE:
