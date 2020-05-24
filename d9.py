@@ -21,7 +21,7 @@ class Intcode():
     def get_values(self, modes, type_of_param):
         values = []
         for i in range(len(type_of_param)):
-            val = -1
+            val = None
             if type_of_param[i] == READ:
                 if modes[i] == POSITION_MODE:
                     val = self.intcode[self.intcode[self.ip+i+1]]
@@ -36,12 +36,15 @@ class Intcode():
                 elif modes[i] == RELATIVE_MODE:
                     val = self.rel_base + self.intcode[self.ip+i+1]
 
+            if val is None:
+                print("Error getting value")
+                
             values.append(val)
 
         return tuple(values) if len(type_of_param) > 1 else values[0]
 
 
-    def Execute(self, input_set=[], new_ip=None, new_rel_base=None, halt_if_input_set_empty=False, verbose=0):
+    def Execute(self, input_set=[], new_ip=None, new_rel_base=None, halt_on_empty_input_set=False, verbose=0):
         self.ip = self.ip if new_ip == None else new_ip
         self.rel_base = self.rel_base if new_rel_base == None else new_rel_base
         outputs = []
@@ -73,7 +76,7 @@ class Intcode():
                 if len(input_set) > 0:  # Inputs the values in input_set
                     self.intcode[x] = input_set.pop(0)
                     self.ip += 2
-                elif halt_if_input_set_empty:   # Halt the program if no more items in input_set
+                elif halt_on_empty_input_set:   # Halt the program if no more items in input_set
                     if verbose >= 2:
                         print("Input set empty, halting")
                     break
