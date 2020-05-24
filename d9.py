@@ -6,7 +6,7 @@ RELATIVE_MODE = 2
 
 READ = 0
 WRITE = 1
-NONE = 99
+NONE, EXIT = 99
 
 # Dictionary defining parameter behaviours for each opcode
 op_params = {
@@ -19,7 +19,7 @@ op_params = {
     7 : [READ, READ, WRITE],
     8 : [READ, READ, WRITE],
     9 : [READ],
-    NONE : []
+    EXIT : []
 }
 
 class Intcode():
@@ -34,6 +34,7 @@ class Intcode():
     # Returns appropriate value if a read command or destination to write to if a write command
     def get_values(self, opcode, modes):
         num_params = len(op_params[opcode])
+        modes.extend([0] * (len(op_params[opcode]) - len(modes)))
         values = []
 
         for i in range(num_params):
@@ -68,10 +69,7 @@ class Intcode():
         while (True):
             instruction = str(self.intcode[self.ip])
             opcode = int(instruction[-2:])
-
-            parameter_modes = [0] * 3
-            for i,mode in enumerate(reversed(instruction[:-2])):
-                parameter_modes[i] = int(mode)
+            parameter_modes = [int(i) for i in reversed(instruction[:-2])]
 
             if verbose >= 2: # For debugging
                 print("Input set:", input_set)
