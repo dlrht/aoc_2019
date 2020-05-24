@@ -72,10 +72,7 @@ class Intcode():
             parameter_modes = [int(i) for i in reversed(instruction[:-2])]
 
             if verbose >= 2: # For debugging
-                print("Input set:", input_set)
-                print_intcode = self.intcode.copy()
-                print_intcode[self.ip] = '***' + str(print_intcode[self.ip]) + '***'
-                print(print_intcode, "-", "ip:"+str(self.ip), "opcode:"+str(opcode), "modes:"+str(parameter_modes))
+                self.print_debug(opcode, parameter_modes, input_set)
 
             params = self.get_values(opcode, parameter_modes)
             x = params[0] if len(params) >= 1 else None
@@ -121,10 +118,18 @@ class Intcode():
                     print("Opcode 99 : Halting program.")
                 break
             else:
-                print("Error: Unexpected opcode="+str(opcode), "ip="+str(self.ip))
+                print("Error: Unexpected opcode")
+                self.print_debug(opcode, parameter_modes, input_set)
                 break
-
+            
         return outputs
+
+
+    def print_debug(self, opcode, param_modes, input_set):
+        print("Input set:", input_set)
+        print_intcode = self.intcode.copy()
+        print_intcode[self.ip] = '***' + str(print_intcode[self.ip]) + '***'
+        print(print_intcode, "-", "ip:"+str(self.ip), "opcode:"+str(opcode), "modes:"+str(param_modes))
 
 
 intcode_original = list(map(int, (Path(__file__).parent / 'd9_input.txt').read_text().split(',')))  # Rose this is SO smooth, dang
