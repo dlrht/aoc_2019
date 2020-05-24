@@ -39,18 +39,18 @@ class Intcode():
 
         for i in range(num_params):
             val = None
-            if self.op_params[opcode][i] == self.READ:
-                if modes[i] == self.POSITION_MODE:
+            if self.op_params[opcode][i] == Intcode.READ:
+                if modes[i] == Intcode.POSITION_MODE:
                     val = self.intcode[self.intcode[self.ip+i+1]]
-                elif modes[i] == self.IMMEDIATE_MODE:
+                elif modes[i] == Intcode.IMMEDIATE_MODE:
                     val = self.intcode[self.ip+i+1]
-                elif modes[i] == self.RELATIVE_MODE:
+                elif modes[i] == Intcode.RELATIVE_MODE:
                     val = self.intcode[self.rel_base + self.intcode[self.ip+i+1]]
 
-            elif self.op_params[opcode][i] == self.WRITE:
-                if modes[i] == self.POSITION_MODE:
+            elif self.op_params[opcode][i] == Intcode.WRITE:
+                if modes[i] == Intcode.POSITION_MODE:
                     val = self.intcode[self.ip+i+1]
-                elif modes[i] == self.RELATIVE_MODE:
+                elif modes[i] == Intcode.RELATIVE_MODE:
                     val = self.rel_base + self.intcode[self.ip+i+1]
 
             if val is None:
