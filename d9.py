@@ -1,15 +1,15 @@
 from pathlib import Path
 
-POSITION_MODE = 0
-IMMEDIATE_MODE = 1
-RELATIVE_MODE = 2
-
-READ = 0
-WRITE = 1
-NONE = EXIT = 99
-
 # Dictionary defining parameter behaviours for each opcode
 class Intcode():
+    POSITION_MODE = 0
+    IMMEDIATE_MODE = 1
+    RELATIVE_MODE = 2
+
+    READ = 0
+    WRITE = 1
+    NONE = EXIT = 99
+
     op_params = {
         1 : [READ, READ, WRITE],
         2 : [READ, READ, WRITE],
@@ -39,18 +39,18 @@ class Intcode():
 
         for i in range(num_params):
             val = None
-            if self.op_params[opcode][i] == READ:
-                if modes[i] == POSITION_MODE:
+            if self.op_params[opcode][i] == self.READ:
+                if modes[i] == self.POSITION_MODE:
                     val = self.intcode[self.intcode[self.ip+i+1]]
-                elif modes[i] == IMMEDIATE_MODE:
+                elif modes[i] == self.IMMEDIATE_MODE:
                     val = self.intcode[self.ip+i+1]
-                elif modes[i] == RELATIVE_MODE:
+                elif modes[i] == self.RELATIVE_MODE:
                     val = self.intcode[self.rel_base + self.intcode[self.ip+i+1]]
 
-            elif self.op_params[opcode][i] == WRITE:
-                if modes[i] == POSITION_MODE:
+            elif self.op_params[opcode][i] == self.WRITE:
+                if modes[i] == self.POSITION_MODE:
                     val = self.intcode[self.ip+i+1]
-                elif modes[i] == RELATIVE_MODE:
+                elif modes[i] == self.RELATIVE_MODE:
                     val = self.rel_base + self.intcode[self.ip+i+1]
 
             if val is None:
