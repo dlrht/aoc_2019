@@ -34,7 +34,7 @@ class Intcode():
     # Returns appropriate value if a read command or destination to write to if a write command
     def get_values(self, opcode, modes):
         num_params = len(op_params[opcode])
-        modes.extend([0] * (len(op_params[opcode]) - len(modes)))
+        modes.extend([0] * (num_params - len(modes)))
         values = []
 
         for i in range(num_params):
