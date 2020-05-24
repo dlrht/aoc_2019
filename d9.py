@@ -6,7 +6,7 @@ RELATIVE_MODE = 2
 
 READ = 0
 WRITE = 1
-NONE, EXIT = 99
+NONE = EXIT = 99
 
 # Dictionary defining parameter behaviours for each opcode
 op_params = {
