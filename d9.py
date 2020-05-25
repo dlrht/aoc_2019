@@ -75,36 +75,32 @@ class Intcode():
             y = params[1] if len(params) >= 2 else None
             z = params[2] if len(params) >= 3 else None
 
+            self.ip += len(params) + 1 
+
             if opcode == 1:     # Addition
                 self.intcode[z] = x + y
-                self.ip += len(params) + 1 
             elif opcode == 2:   # Multiplication
                 self.intcode[z] = x * y
-                self.ip += len(params) + 1 
             elif opcode == 3:   # Single int input
                 if len(input_set) == 0 and halt_on_empty_input_set:
                     if verbose >= 2:
                         print("Input set empty, halting")
+                    self.ip -= len(params) - 1  # If halting on empty set do not increment ip
                     break
                 else:
                     self.intcode[x] = input_set.pop(0) if len(input_set) > 0 else int(input("Enter input: "))
-                    self.ip += len(params) + 1 
             elif opcode == 4:   # Outputs value of only parameter and stores to output list
                 outputs.append(x)
-                self.ip += len(params) + 1           
             elif opcode == 5:   # jump-if-true
-                self.ip = y if x != 0 else self.ip + len(params) + 1 
+                self.ip = y if x != 0 else self.ip
             elif opcode == 6:   # jump-if-false
-                self.ip = y if x == 0 else self.ip + len(params) + 1 
+                self.ip = y if x == 0 else self.ip
             elif opcode == 7:   # less than
                 self.intcode[z] = 1 if x < y else 0
-                self.ip += len(params) + 1 
             elif opcode == 8:   # equals
                 self.intcode[z] = 1 if x == y else 0
-                self.ip += len(params) + 1 
             elif opcode == 9:   # set relative base
                 self.rel_base += x
-                self.ip += len(params) + 1 
             elif opcode == 99: # Halt opcode
                 if verbose >= 1:
                     print("Opcode 99 : Halting program.")
