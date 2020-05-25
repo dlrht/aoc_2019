@@ -38,22 +38,18 @@ class Intcode():
         values = []
 
         for i in range(num_params):
-            val = None
-            if self.op_params[opcode][i] == Intcode.READ:
-                if modes[i] == Intcode.POSITION_MODE:
-                    val = self.intcode[self.intcode[self.ip+i+1]]
-                elif modes[i] == Intcode.IMMEDIATE_MODE:
-                    val = self.intcode[self.ip+i+1]
-                elif modes[i] == Intcode.RELATIVE_MODE:
-                    val = self.intcode[self.rel_base + self.intcode[self.ip+i+1]]
+            val = idx = None
 
-            elif self.op_params[opcode][i] == Intcode.WRITE:
-                if modes[i] == Intcode.POSITION_MODE:
-                    val = self.intcode[self.ip+i+1]
-                elif modes[i] == Intcode.RELATIVE_MODE:
-                    val = self.rel_base + self.intcode[self.ip+i+1]
+            if modes[i] == Intcode.POSITION_MODE:
+                idx = self.intcode[self.ip+i+1]
+            elif modes[i] == Intcode.IMMEDIATE_MODE:
+                idx = self.ip+i+1
+            elif modes[i] == Intcode.RELATIVE_MODE:
+                idx = self.rel_base + self.intcode[self.ip+i+1]
 
-            if val is None:
+            val = self.intcode[idx] if self.op_params[opcode][i] == Intcode.READ else idx
+
+            if val is None or modes[i] == Intcode.IMMEDIATE_MODE and self.op_params[opcode][i] == Intcode.WRITE:
                 print("Error getting value")
 
             values.append(val)
