@@ -58,8 +58,8 @@ class Intcode():
 
 
     def Execute(self, input_set=[], new_ip=None, new_rel_base=None, halt_on_empty_input_set=False, verbose=0):
-        self.ip = self.ip if new_ip == None else new_ip
-        self.rel_base = self.rel_base if new_rel_base == None else new_rel_base
+        self.ip = new_ip if new_ip != None else self.ip
+        self.rel_base = new_rel_base if new_rel_base != None else self.rel_base
         outputs = []
 
         while (True):
