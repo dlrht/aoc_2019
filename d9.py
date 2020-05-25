@@ -49,7 +49,7 @@ class Intcode():
 
             val = self.intcode[idx] if self.op_params[opcode][i] == Intcode.READ else idx
 
-            if val is None or modes[i] == Intcode.IMMEDIATE_MODE and self.op_params[opcode][i] == Intcode.WRITE:
+            if val is None or (modes[i] == Intcode.IMMEDIATE_MODE and self.op_params[opcode][i] == Intcode.WRITE):
                 print("Error getting value")
 
             values.append(val)
