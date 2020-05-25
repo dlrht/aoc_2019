@@ -39,8 +39,8 @@ class Intcode():
 
         for i in range(num_params):
             val = idx = None
-            param_type = self.op_params[opcode][i]
             param_mode = modes[i]
+            param_type = self.op_params[opcode][i]
 
             if param_mode == Intcode.POSITION_MODE:
                 idx = self.intcode[self.ip+i+1]
