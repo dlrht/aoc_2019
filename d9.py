@@ -85,7 +85,7 @@ class Intcode():
                 if len(input_set) == 0 and halt_on_empty_input_set:
                     if verbose >= 2:
                         print("Input set empty, halting")
-                    self.ip -= len(params) - 1  # If halting on empty set do not increment ip
+                    self.ip -= (len(params) + 1)  # If halting on empty set do not increment ip
                     break
                 else:
                     self.intcode[x] = input_set.pop(0) if len(input_set) > 0 else int(input("Enter input: "))
@@ -107,7 +107,7 @@ class Intcode():
                 break
             else:
                 print("Error: Unexpected opcode")
-                self.ip -= len(params) + 1
+                self.ip -= (len(params) + 1)
                 self.print_debug(opcode, parameter_modes, input_set)
                 break
             
