@@ -33,12 +33,11 @@ class Intcode():
     # Returns a len(type_of_param)-tuple with appropriate values based on parameter modes
     # Returns appropriate value if a read command or destination to write to if a write command
     def get_values(self, opcode, param_modes):
-        num_params = len(self.op_params[opcode])
-        param_modes.extend([0] * (num_params - len(param_modes)))
         param_types = self.op_params[opcode]
+        param_modes.extend([0] * (len(param_types) - len(param_modes)))
         values = []
 
-        for i in range(num_params):
+        for i in range(len(param_types)):
             val = idx = None
 
             if param_modes[i] == Intcode.POSITION_MODE:
