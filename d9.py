@@ -107,6 +107,7 @@ class Intcode():
                 break
             else:
                 print("Error: Unexpected opcode")
+                self.ip -= len(params) + 1
                 self.print_debug(opcode, parameter_modes, input_set)
                 break
             
