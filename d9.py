@@ -39,6 +39,7 @@ class Intcode():
 
         for i in range(num_params):
             val = idx = None
+            type = self.op_params[opcode][i]
 
             if modes[i] == Intcode.POSITION_MODE:
                 idx = self.intcode[self.ip+i+1]
@@ -47,9 +48,9 @@ class Intcode():
             elif modes[i] == Intcode.RELATIVE_MODE:
                 idx = self.rel_base + self.intcode[self.ip+i+1]
 
-            val = self.intcode[idx] if self.op_params[opcode][i] == Intcode.READ else idx
+            val = self.intcode[idx] if type == Intcode.READ else idx
 
-            if val is None or (modes[i] == Intcode.IMMEDIATE_MODE and self.op_params[opcode][i] == Intcode.WRITE):
+            if val is None or (modes[i] == Intcode.IMMEDIATE_MODE and type == Intcode.WRITE):
                 print("Error getting value")
 
             values.append(val)
