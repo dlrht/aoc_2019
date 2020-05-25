@@ -32,26 +32,25 @@ class Intcode():
 
     # Returns a len(type_of_param)-tuple with appropriate values based on parameter modes
     # Returns appropriate value if a read command or destination to write to if a write command
-    def get_values(self, opcode, modes):
+    def get_values(self, opcode, param_modes):
         num_params = len(self.op_params[opcode])
-        modes.extend([0] * (num_params - len(modes)))
+        param_modes.extend([0] * (num_params - len(param_modes)))
+        param_types = self.op_params[opcode]
         values = []
 
         for i in range(num_params):
             val = idx = None
-            param_mode = modes[i]
-            param_type = self.op_params[opcode][i]
 
-            if param_mode == Intcode.POSITION_MODE:
+            if param_modes[i] == Intcode.POSITION_MODE:
                 idx = self.intcode[self.ip+i+1]
-            elif param_mode == Intcode.IMMEDIATE_MODE:
+            elif param_modes[i] == Intcode.IMMEDIATE_MODE:
                 idx = self.ip+i+1
-            elif param_mode == Intcode.RELATIVE_MODE:
+            elif param_modes[i] == Intcode.RELATIVE_MODE:
                 idx = self.rel_base + self.intcode[self.ip+i+1]
 
-            val = self.intcode[idx] if param_type == Intcode.READ else idx
+            val = self.intcode[idx] if param_types[i] == Intcode.READ else idx
 
-            if val is None or (param_mode == Intcode.IMMEDIATE_MODE and param_type == Intcode.WRITE):
+            if val is None or (param_modes[i] == Intcode.IMMEDIATE_MODE and param_types[i] == Intcode.WRITE):
                 print("Error getting value")
 
             values.append(val)
