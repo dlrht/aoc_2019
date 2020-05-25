@@ -1,11 +1,12 @@
 from pathlib import Path
 
 # Dictionary defining parameter behaviours for each opcode
-class Intcode():
-    POSITION_MODE = 0
-    IMMEDIATE_MODE = 1
-    RELATIVE_MODE = 2
+class MODE():
+    POSITION = 0
+    IMMEDIATE = 1
+    RELATIVE = 2
 
+class Intcode():
     READ = 0
     WRITE = 1
     NONE = EXIT = 99
@@ -39,16 +40,16 @@ class Intcode():
         for i in range(len(param_types)):
             val = idx = None
 
-            if param_modes[i] == Intcode.POSITION_MODE:
+            if param_modes[i] == MODE.POSITION:
                 idx = self.intcode[self.ip+i+1]
-            elif param_modes[i] == Intcode.IMMEDIATE_MODE:
+            elif param_modes[i] == MODE.IMMEDIATE:
                 idx = self.ip+i+1
-            elif param_modes[i] == Intcode.RELATIVE_MODE:
+            elif param_modes[i] == MODE.RELATIVE:
                 idx = self.rel_base + self.intcode[self.ip+i+1]
 
             val = self.intcode[idx] if param_types[i] == Intcode.READ else idx
 
-            if val is None or (param_modes[i] == Intcode.IMMEDIATE_MODE and param_types[i] == Intcode.WRITE):
+            if val is None or (param_modes[i] == MODE.IMMEDIATE and param_types[i] == Intcode.WRITE):
                 print("Error getting value")
 
             values.append(val)
