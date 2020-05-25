@@ -34,7 +34,6 @@ class Intcode():
     # Returns appropriate value if a read command or destination to write to if a write command
     def get_values(self, opcode, param_modes):
         param_types = self.op_params[opcode]
-        param_modes.extend([0] * (len(param_types) - len(param_modes)))
         values = []
 
         for i in range(len(param_types)):
@@ -66,6 +65,7 @@ class Intcode():
             instruction = str(self.intcode[self.ip])
             opcode = int(instruction[-2:])
             parameter_modes = [int(i) for i in reversed(instruction[:-2])]
+            parameter_modes.extend([0] * (len(self.op_params[opcode]) - len(parameter_modes)))
 
             if verbose >= 2: # For debugging
                 self.print_debug(opcode, parameter_modes, input_set)
