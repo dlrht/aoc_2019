@@ -1,7 +1,7 @@
 from pathlib import Path
 import math
 
-# Its not working cause we reversed things!!
+# Returns a dictionary where key is an angle and value is a list of asteroids detected at this angle wrt to coord
 def find_pts_visible(coords_dict, coord):
     angles = {}
 
@@ -24,6 +24,7 @@ def find_pts_visible(coords_dict, coord):
     return angles
 
 
+# Returns a dictionary where of format [asteroid_coordinate] = {dictionary_of_detected_asteroids}
 def find_pts_visible_all(coords_dict):
     for i in coords_dict.keys():
         coords_dict[i] = find_pts_visible(coords_dict, i)
@@ -31,6 +32,7 @@ def find_pts_visible_all(coords_dict):
     return coords_dict
 
 
+# Returns the closest point in list_of_coords to the source point
 def get_closest_pt(source, list_of_coords):
     newlist = [(math.sqrt((pt[0] - source[0])**2 + (pt[1] - source[1])**2), pt) for pt in list_of_coords if pt != source]
     closest_pt = min(newlist) # does this work on tuples like this?
