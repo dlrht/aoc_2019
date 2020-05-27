@@ -16,7 +16,7 @@ def find_pts_visible(coords_dict, coord):
             angle = math.atan2(v_y_unit, v_x_unit)
             angle = round(angle, 6) # OMG THIS FIXED IT
 
-            if (angle) not in angles:
+            if angle not in angles:
                 angles[angle] = [i]
             else:
                 angles[angle].append(i)
@@ -74,17 +74,31 @@ for i in asteroid_dict.keys():
 #             row = row + "." 
 #     print(row)
 
-dict_coord = {
-    (0,0): 0,
-    (1,-1): 0,
-    (2,-2): 0,
-    (3,-4): 0,
-    (0,1): 0,
-}
+# dict_coord = {
+#     (0,0): 0,
+#     (1,-1): 0,
+#     (2,-2): 0,
+#     (3,-4): 0,
+#     (0,1): 0,
+# }
 
 # test = list(asteroid_dict.keys())
 # print(asteroid_dict[test[1]])
 # print(find_pts_visible(asteroid_dict, (4, -3)))
 
-print(max_detected)
-# print(asteroid_dict[max_detected[0]])
+# print(max_detected)
+station_pos = max_detected[0]
+detected_asteroids = asteroid_dict[station_pos]
+print(detected_asteroids)
+angles_list = detected_asteroids.keys()
+
+print()
+y_axis_pos = math.atan2(1, 0)
+y_axis_neg = math.atan2(-1, 0)
+sorted_angles = sorted(angles_list)
+sorted_angles = list(reversed(sorted_angles))
+angles_sorted_clockwise = [i for i in sorted_angles if i <= y_axis_pos] + [i for i in sorted_angles if i > y_axis_pos]
+print(angles_sorted_clockwise)
+print(station_pos)
+print(detected_asteroids[angles_sorted_clockwise[0]])
+print(get_closest_pt(station_pos, detected_asteroids[angles_sorted_clockwise[0]]))
