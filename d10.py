@@ -57,6 +57,8 @@ for i in asteroid_dict.keys():
     if len(asteroid_dict[i]) > max_detected[1]:
         max_detected = (i, len(asteroid_dict[i]))
 
+print("Asteroid detecting most asteroids: ", max_detected)
+
 # Convert dict to (coord, # of detection)
 # for i in asteroid_dict.keys():
 #     asteroid_dict[i] = len(asteroid_dict[i])
@@ -89,19 +91,18 @@ for i in asteroid_dict.keys():
 # print(max_detected)
 station_pos = max_detected[0]
 detected_asteroids = asteroid_dict[station_pos]
-print(detected_asteroids)
+# print(detected_asteroids)
 angles_list = detected_asteroids.keys()
 
-print()
 y_axis_pos = math.atan2(1, 0)
 y_axis_neg = math.atan2(-1, 0)
 sorted_angles = sorted(angles_list)
 sorted_angles = list(reversed(sorted_angles))
 angles_sorted_clockwise = [i for i in sorted_angles if i <= y_axis_pos] + [i for i in sorted_angles if i > y_axis_pos]
-print(angles_sorted_clockwise)
-print(station_pos)
-print(detected_asteroids[angles_sorted_clockwise[0]])
-print(get_closest_pt(station_pos, detected_asteroids[angles_sorted_clockwise[0]]))
+# print(angles_sorted_clockwise)
+# print(station_pos)
+# print(detected_asteroids[angles_sorted_clockwise[0]])
+# print(get_closest_pt(station_pos, detected_asteroids[angles_sorted_clockwise[0]]))
 
 counter = 1
 for angle in angles_sorted_clockwise:
@@ -109,5 +110,6 @@ for angle in angles_sorted_clockwise:
     closest_asteroid = get_closest_pt(station_pos, asteroids)
     asteroids.remove(closest_asteroid[1])
 
-    print(counter, closest_asteroid)
+    if counter == 200:
+        print("Asteroid " + str(counter) + " vaporized at", closest_asteroid)
     counter += 1
