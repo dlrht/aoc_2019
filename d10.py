@@ -102,3 +102,12 @@ print(angles_sorted_clockwise)
 print(station_pos)
 print(detected_asteroids[angles_sorted_clockwise[0]])
 print(get_closest_pt(station_pos, detected_asteroids[angles_sorted_clockwise[0]]))
+
+counter = 1
+for angle in angles_sorted_clockwise:
+    asteroids = detected_asteroids[angle]
+    closest_asteroid = get_closest_pt(station_pos, asteroids)
+    asteroids.remove(closest_asteroid[1])
+
+    print(counter, closest_asteroid)
+    counter += 1
