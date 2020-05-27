@@ -1,25 +1,9 @@
 from pathlib import Path
 import math
 
-# finds angle between 2 vectors u,v defined by 2 points x,y
-def find_angle(u_x, u_y, v_x, v_y):
-    dot_product = (u_x*v_x) + (u_y*v_y)
-    u_magnitude = math.sqrt((u_x*u_x) + (u_y*u_y))
-    v_magnitude = math.sqrt((v_x*v_x) + (v_y*v_y))
-    cos_theta = dot_product/(u_magnitude * v_magnitude)
-    theta = math.acos(cos_theta)
-
-    # print("u,v: ", u_x, u_y, v_x, v_y)
-    # print("vals: ", dot_product, u_magnitude, v_magnitude)
-    # print("costheta: ", cos_theta)
-
-    return theta
-
 # Its not working cause we reversed things!!
 def find_pts_visible(coords_dict, coord):
     angles = {}
-
-    u_x, u_y = (1,0)
 
     for i in coords_dict.keys():
         if i != coord:
@@ -29,21 +13,13 @@ def find_pts_visible(coords_dict, coord):
             v_x_unit = v_x/math.sqrt(v_x*v_x + v_y*v_y)
             v_y_unit = v_y/math.sqrt(v_x*v_x + v_y*v_y)
 
-            angle = find_angle(u_x, u_y, v_x_unit, v_y_unit)
-
-            quadrant_x = quadrant_y = 0
-            if v_x_unit != 0:
-                quadrant_x = v_x_unit // abs(v_x_unit)
-            if v_y_unit != 0:
-                quadrant_y = v_y_unit // abs(v_y_unit)
-
-            # print(i, angle)
+            angle = math.atan2(v_y_unit, v_x_unit)
             angle = round(angle, 6) # OMG THIS FIXED IT
 
-            if (angle, (quadrant_x, quadrant_y)) not in angles:
-                angles[angle, (quadrant_x, quadrant_y)] = [i]
+            if (angle) not in angles:
+                angles[angle] = [i]
             else:
-                angles[angle, (quadrant_x, quadrant_y)].append(i)
+                angles[angle].append(i)
 
     return angles
 
@@ -76,10 +52,10 @@ for i in range(len(data)):
 find_pts_visible_all(asteroid_dict)
 
 # Find asteroid with max # of detections
-# max_detected = ((0,0), 0)
-# for i in asteroid_dict.keys():
-#     if len(asteroid_dict[i]) > max_detected[1]:
-#         max_detected = (i, len(asteroid_dict[i]))
+max_detected = ((0,0), 0)
+for i in asteroid_dict.keys():
+    if len(asteroid_dict[i]) > max_detected[1]:
+        max_detected = (i, len(asteroid_dict[i]))
 
 # Convert dict to (coord, # of detection)
 # for i in asteroid_dict.keys():
@@ -106,9 +82,9 @@ dict_coord = {
     (0,1): 0,
 }
 
-test = list(asteroid_dict.keys())
-print(asteroid_dict[test[1]])
+# test = list(asteroid_dict.keys())
+# print(asteroid_dict[test[1]])
 # print(find_pts_visible(asteroid_dict, (4, -3)))
 
-# print(max_detected)
+print(max_detected)
 # print(asteroid_dict[max_detected[0]])
